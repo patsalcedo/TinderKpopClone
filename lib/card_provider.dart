@@ -1,7 +1,6 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'models/user.dart';
 
 enum CardStatus { like, dislike, superLike }
@@ -42,15 +41,6 @@ class CardProvider extends ChangeNotifier {
     notifyListeners();
 
     final status = getStatus(force: true);
-    final statusString = status.toString().split('.').last.toUpperCase();
-
-    if(status != null) {
-      Fluttertoast.cancel();
-      Fluttertoast.showToast(
-        msg: statusString,
-        fontSize: 36,
-      );
-    }
 
     switch(status) {
       case CardStatus.like:

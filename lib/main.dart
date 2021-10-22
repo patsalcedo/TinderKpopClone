@@ -18,8 +18,8 @@ class MyApp extends StatelessWidget {
       style: ElevatedButton.styleFrom(
         elevation: 8,
         primary: Colors.white,
-        shape: CircleBorder(),
-        minimumSize: Size.square(80),
+        shape: const CircleBorder(),
+        minimumSize: const Size.square(80),
       ),
     ),
   );
@@ -36,7 +36,6 @@ class MyApp extends StatelessWidget {
         home: const MyHomePage(),
       ),
     );
-
   }
 }
 
@@ -75,36 +74,44 @@ class _MyHomePageState extends State<MyHomePage> {
     final provider = Provider.of<CardProvider>(context);
     final users = provider.users;
 
-    return users.isEmpty ?
-    Center(
-        child: ElevatedButton(
-          child: const Text('Restart'),
-          onPressed: () {
-            final provider = Provider.of<CardProvider>(context, listen: false);
-            provider.resetUsers();
-          },
-        )
-    ) : Stack(
-      children: users
-          .map((user) =>
-          Column(
-            children: [
-              buildLogo(),
-              const SizedBox(height: 16),
-              Expanded(child: TinderCard(
-                user: user,
-                isFront: users.last == user,
-              )),
-              const SizedBox(height: 16),
-              buildButtons(),
-            ],
-          )
-      ).toList(),
-    );
+    return users.isEmpty
+        ? Center(
+            child: ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+            ),
+            child: const Text(
+              'Restart',
+              style: TextStyle(color: Colors.black),
+            ),
+            onPressed: () {
+              final provider =
+                  Provider.of<CardProvider>(context, listen: false);
+              provider.resetUsers();
+            },
+          ))
+        : Stack(
+            children: users
+                .map((user) => Column(
+                      children: [
+                        buildLogo(),
+                        const SizedBox(height: 16),
+                        Expanded(
+                            child: TinderCard(
+                              user: user,
+                              isFront: users.last == user,
+                        )),
+                        const SizedBox(height: 16),
+                        buildButtons(),
+                      ],
+                    ))
+                .toList(),
+          );
   }
 
-  Widget buildLogo() =>
-      Row(
+  Widget buildLogo() => Row(
         children: const [
           Icon(
             Icons.local_fire_department_rounded,
@@ -123,31 +130,86 @@ class _MyHomePageState extends State<MyHomePage> {
         ],
       );
 
+  Widget buildButtons() {
+    final provider = Provider.of<CardProvider>(context);
+    final status = provider.getStatus();
+    final isLike = status == CardStatus.like;
+    final isDislike = status == CardStatus.dislike;
+    final isSuperLike = status == CardStatus.superLike;
 
-  Widget buildButtons() => Row(
-    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-    children: [
-      ElevatedButton(
-          child: const Icon(
-              Icons.clear,
-              color: Colors.red,
-              size: 45),
-        onPressed: () {},
-      ),
-      ElevatedButton(
-        child: const Icon(
-            Icons.star,
-            color: Colors.blue,
-            size: 45),
-        onPressed: () {},
-      ),
-      ElevatedButton(
-        child: const Icon(
-            Icons.favorite,
-            color: Colors.teal,
-            size: 45),
-        onPressed: () {},
-      ),
-    ],
-  );
+    return Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              ElevatedButton(
+                style: ButtonStyle(
+                  foregroundColor:
+                      getColor(Colors.red, Colors.white, isDislike),
+                  backgroundColor:
+                      getColor(Colors.white, Colors.red, isDislike),
+                  side: getBorder(Colors.red, Colors.white, isDislike),
+                ),
+                child: const Icon(Icons.clear, size: 45),
+                onPressed: () {
+                  final provider =
+                      Provider.of<CardProvider>(context, listen: false);
+                  provider.dislike();
+                },
+              ),
+              ElevatedButton(
+                style: ButtonStyle(
+                  foregroundColor:
+                      getColor(Colors.blue, Colors.white, isSuperLike),
+                  backgroundColor:
+                      getColor(Colors.white, Colors.blue, isSuperLike),
+                  side: getBorder(Colors.blue, Colors.white, isSuperLike),
+                ),
+                child: const Icon(Icons.star, size: 45),
+                onPressed: () {
+                  final provider =
+                      Provider.of<CardProvider>(context, listen: false);
+                  provider.superLike();
+                },
+              ),
+              ElevatedButton(
+                style: ButtonStyle(
+                  foregroundColor: getColor(Colors.teal, Colors.white, isLike),
+                  backgroundColor: getColor(Colors.white, Colors.teal, isLike),
+                  side: getBorder(Colors.teal, Colors.white, isLike),
+                ),
+                child: const Icon(Icons.favorite, size: 45),
+                onPressed: () {
+                  final provider =
+                      Provider.of<CardProvider>(context, listen: false);
+                  provider.like();
+                },
+              ),
+            ],
+          );
+  }
+
+  MaterialStateProperty<Color> getColor(
+      Color color, Color colorPressed, bool force) {
+    final getColor = (Set<MaterialState> states) {
+      if (force || states.contains(MaterialState.pressed)) {
+        return colorPressed;
+      } else {
+        return color;
+      }
+    };
+
+    return MaterialStateProperty.resolveWith(getColor);
+  }
+
+  MaterialStateProperty<BorderSide> getBorder(
+      Color color, Color colorPressed, bool force) {
+    final getBorder = (Set<MaterialState> states) {
+      if (force || states.contains(MaterialState.pressed)) {
+        return BorderSide(color: Colors.transparent);
+      } else {
+        return BorderSide(color: color, width: 2);
+      }
+    };
+
+    return MaterialStateProperty.resolveWith(getBorder);
+  }
 }
