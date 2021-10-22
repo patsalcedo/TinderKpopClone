@@ -4,23 +4,36 @@ import 'package:tinder_app_tutorial/tinder_card.dart';
 import 'card_provider.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  MyApp({Key? key}) : super(key: key);
 
   static const String title = 'Tinder Clone';
+
+  final theme = ThemeData(
+    primarySwatch: Colors.pink,
+    elevatedButtonTheme: ElevatedButtonThemeData(
+      style: ElevatedButton.styleFrom(
+        elevation: 8,
+        primary: Colors.white,
+        shape: CircleBorder(),
+        minimumSize: Size.square(80),
+      ),
+    ),
+  );
 
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
       create: (context) => CardProvider(),
-      child: const MaterialApp(
+      child: MaterialApp(
         debugShowCheckedModeBanner: false,
         title: title,
-        home: MyHomePage(),
+        theme: theme,
+        home: const MyHomePage(),
       ),
     );
 
@@ -37,12 +50,22 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: Container(
-          alignment: Alignment.center,
-          padding: const EdgeInsets.all(16.0),
-          child: buildCards(),
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [Colors.red.shade200, Colors.black],
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+        ),
+      ),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: SafeArea(
+          child: Container(
+            alignment: Alignment.center,
+            padding: const EdgeInsets.all(16.0),
+            child: buildCards(),
+          ),
         ),
       ),
     );
@@ -50,24 +73,81 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Widget buildCards() {
     final provider = Provider.of<CardProvider>(context);
-    final assetImages = provider.assetImages;
+    final users = provider.users;
 
-    return assetImages.isEmpty ?
+    return users.isEmpty ?
     Center(
-      child: ElevatedButton(
-        child: const Text('Restart'),
-        onPressed: () {
-          final provider = Provider.of<CardProvider>(context, listen: false);
-          provider.resetUsers();
-        },
-      )
+        child: ElevatedButton(
+          child: const Text('Restart'),
+          onPressed: () {
+            final provider = Provider.of<CardProvider>(context, listen: false);
+            provider.resetUsers();
+          },
+        )
     ) : Stack(
-      children: assetImages
-          .map((assetImage) => TinderCard(
-                assetImage: assetImage,
-                isFront: assetImages.last == assetImage,
-              ))
-          .toList(),
+      children: users
+          .map((user) =>
+          Column(
+            children: [
+              buildLogo(),
+              const SizedBox(height: 16),
+              Expanded(child: TinderCard(
+                user: user,
+                isFront: users.last == user,
+              )),
+              const SizedBox(height: 16),
+              buildButtons(),
+            ],
+          )
+      ).toList(),
     );
   }
+
+  Widget buildLogo() =>
+      Row(
+        children: const [
+          Icon(
+            Icons.local_fire_department_rounded,
+            color: Colors.white,
+            size: 36,
+          ),
+          SizedBox(width: 4),
+          Text(
+            'Tinder',
+            style: TextStyle(
+              fontSize: 36,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
+          ),
+        ],
+      );
+
+
+  Widget buildButtons() => Row(
+    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+    children: [
+      ElevatedButton(
+          child: const Icon(
+              Icons.clear,
+              color: Colors.red,
+              size: 45),
+        onPressed: () {},
+      ),
+      ElevatedButton(
+        child: const Icon(
+            Icons.star,
+            color: Colors.blue,
+            size: 45),
+        onPressed: () {},
+      ),
+      ElevatedButton(
+        child: const Icon(
+            Icons.favorite,
+            color: Colors.teal,
+            size: 45),
+        onPressed: () {},
+      ),
+    ],
+  );
 }

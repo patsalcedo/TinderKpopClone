@@ -3,14 +3,15 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'card_provider.dart';
+import 'models/user.dart';
 
 class TinderCard extends StatefulWidget {
-  final String assetImage;
+  final User user;
   final bool isFront;
 
   const TinderCard({
     Key? key,
-    required this.assetImage,
+    required this.user,
     required this.isFront,
 }) : super(key: key);
 
@@ -42,12 +43,33 @@ class _TinderCardState extends State<TinderCard> {
     child: Container(
       decoration: BoxDecoration(
           image: DecorationImage(
-            image: AssetImage(widget.assetImage),
+            image: AssetImage(widget.user.assetImage),
             fit: BoxFit.cover,
             alignment: const Alignment(-0.3, 0),
           ),
       ),
-    ),
+      child: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Colors.transparent, Colors.black],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            stops: [0.7, 1],
+          ),
+        ),
+        child: Container(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            children: [
+              const Spacer(),
+              buildName(),
+              const SizedBox(height: 8),
+              buildStatus(),
+            ],
+          ),
+        ),
+      ),
+      ),
   );
 
   Widget buildFrontCard() => GestureDetector(
@@ -158,4 +180,43 @@ class _TinderCardState extends State<TinderCard> {
         )
     );
   }
+
+  Widget buildName() => Row(
+    children: [
+      Text(
+        widget.user.name,
+        style: const TextStyle(
+          fontSize: 32,
+          color: Colors.white,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+      const SizedBox(width: 16),
+      Text(
+        '${widget.user.age}',
+        style: const TextStyle(
+          fontSize: 32,
+          color: Colors.white,
+        ),
+      )
+    ],
+  );
+
+  Widget buildStatus() => Row(
+    children: [
+      Container(
+        decoration: const BoxDecoration(
+          shape: BoxShape.circle,
+          color: Colors.green,
+        ),
+        width: 12,
+        height: 12,
+      ),
+      const SizedBox(width: 8),
+      const Text(
+        'Recently Active',
+        style: TextStyle(fontSize: 20, color: Colors.white),
+      )
+    ],
+  );
 }

@@ -2,17 +2,18 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'models/user.dart';
 
 enum CardStatus { like, dislike, superLike }
 
 class CardProvider extends ChangeNotifier {
-  List<String> _assetImages = [];
+  List<User> _users = [];
   bool _isDragging = false;
   double _angle = 0;
   Offset _position = Offset.zero;
   Size _screenSize = Size.zero;
 
-  List<String> get assetImages => _assetImages;
+  List<User> get users => _users;
   bool get isDragging => _isDragging;
   Offset get position => _position;
   double get angle => _angle;
@@ -76,19 +77,64 @@ class CardProvider extends ChangeNotifier {
   }
 
   void resetUsers() {
-    _assetImages = <String>[
-      'assets/twice/nayeon.jpg',
-      'assets/twice/jeongyeon.jpg',
-      'assets/twice/momo.jpg',
-      'assets/twice/squid_game_guard.PNG',
-      'assets/twice/sana.jpg',
-      'assets/twice/jihyo.jpg',
-      'assets/twice/mina.jpg',
-      'assets/twice/squid_game_front_man.PNG',
-      'assets/twice/dahyun.jpg',
-      'assets/twice/chaeyoung.jpg',
-      'assets/twice/tzuyu.jpg',
+    _users = <User>[
+      const User(
+        name: 'Nayeon',
+        age: 25,
+        assetImage: 'assets/twice/nayeon.jpg',
+      ),
+      const User(
+        name: 'Jeongyeon',
+        age: 24,
+        assetImage: 'assets/twice/jeongyeon.jpg',
+      ),
+      const User(
+        name: 'Momo',
+        age: 25,
+        assetImage: 'assets/twice/momo.jpg',
+      ),
+      const User(
+        name: 'Squid Game Guard',
+        age: 38,
+        assetImage: 'assets/twice/squid_game_guard.PNG',
+      ),
+      const User(
+        name: 'Sana',
+        age: 25,
+        assetImage: 'assets/twice/sana.jpg',
+      ),
+      const User(
+        name: 'Jihyo',
+        age: 24,
+        assetImage: 'assets/twice/jihyo.jpg',
+      ),
+      const User(
+        name: 'Mina',
+        age: 24,
+        assetImage: 'assets/twice/mina.jpg',
+      ),
+      const User(
+        name: 'Front Man',
+        age: 43,
+        assetImage: 'assets/twice/squid_game_front_man.PNG',
+      ),
+      const User(
+        name: 'Dahyun',
+        age: 23,
+        assetImage: 'assets/twice/dahyun.jpg',
+      ),
+      const User(
+        name: 'Chaeyoung',
+        age: 22,
+        assetImage: 'assets/twice/chaeyoung.jpg',
+      ),
+      const User(
+        name: 'Tzuyu',
+        age: 22,
+        assetImage: 'assets/twice/tzuyu.jpg',
+      ),
     ].reversed.toList();
+
     notifyListeners();
   }
 
@@ -152,10 +198,10 @@ class CardProvider extends ChangeNotifier {
   }
 
   Future _nextCard() async {
-    if(_assetImages.isEmpty) return;
+    if(_users.isEmpty) return;
 
     await Future.delayed(const Duration(milliseconds: 200));
-    _assetImages.removeLast();
+    _users.removeLast();
     resetPosition();
   }
 }
