@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'models/user.dart';
+import 'models/user_repository.dart';
 
 enum CardStatus { like, dislike, superLike }
 
@@ -67,64 +68,7 @@ class CardProvider extends ChangeNotifier {
   }
 
   void resetUsers() {
-    _users = <User>[
-      const User(
-        name: 'Nayeon',
-        age: 25,
-        assetImage: 'assets/twice/nayeon.jpg',
-      ),
-      const User(
-        name: 'Jeongyeon',
-        age: 24,
-        assetImage: 'assets/twice/jeongyeon.jpg',
-      ),
-      const User(
-        name: 'Momo',
-        age: 25,
-        assetImage: 'assets/twice/momo.jpg',
-      ),
-      const User(
-        name: 'Squid Game Guard',
-        age: 38,
-        assetImage: 'assets/twice/squid_game_guard.PNG',
-      ),
-      const User(
-        name: 'Sana',
-        age: 25,
-        assetImage: 'assets/twice/sana.jpg',
-      ),
-      const User(
-        name: 'Jihyo',
-        age: 24,
-        assetImage: 'assets/twice/jihyo.jpg',
-      ),
-      const User(
-        name: 'Mina',
-        age: 24,
-        assetImage: 'assets/twice/mina.jpg',
-      ),
-      const User(
-        name: 'Front Man',
-        age: 43,
-        assetImage: 'assets/twice/squid_game_front_man.PNG',
-      ),
-      const User(
-        name: 'Dahyun',
-        age: 23,
-        assetImage: 'assets/twice/dahyun.jpg',
-      ),
-      const User(
-        name: 'Chaeyoung',
-        age: 22,
-        assetImage: 'assets/twice/chaeyoung.jpg',
-      ),
-      const User(
-        name: 'Tzuyu',
-        age: 22,
-        assetImage: 'assets/twice/tzuyu.jpg',
-      ),
-    ].reversed.toList();
-
+    _users = UserRepository.loadUsers().reversed.toList();
     notifyListeners();
   }
 
